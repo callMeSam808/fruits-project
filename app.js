@@ -6,20 +6,26 @@ async function main() {
   await mongoose.connect('mongodb://localhost:27017/fruitsDB');
 
   const fruitSchema = new mongoose.Schema({
-    name: String,
-    score: Number,
+    name: {
+      type: String,
+      required: [true, 'What is this fruit called?']
+    },
+    score: {
+      type: Number,
+      min: 1,
+      max: 10
+    },
     review: String
   });
 
   const Fruit = mongoose.model('Fruit', fruitSchema);
 
-  const apple = new Fruit({ 
-    name: 'Apple',
-    score: 8,
-    review: "Great fruit"
+  const fruit = new Fruit({ 
+    score: 10,
+    review: "Peaches are so yummy!"
   });
 
-  // await apple.save();
+  await fruit.save();
 
   const personSchema = new mongoose.Schema({
     name: String,
@@ -35,30 +41,37 @@ async function main() {
 
   // await person.save();
 
-  const kiwi = new Fruit({
-    name: 'Kiwi',
-    score: 10,
-    review: "The best fruit!"
-  });
+  // const kiwi = new Fruit({
+  //   name: 'Kiwi',
+  //   score: 10,
+  //   review: "The best fruit!"
+  // });
 
-  const orange = new Fruit({
-    name: 'Orange',
-    score: 4,
-    review: "Too sour for me"
-  });
+  // const orange = new Fruit({
+  //   name: 'Orange',
+  //   score: 4,
+  //   review: "Too sour for me"
+  // });
 
-  const banana = new Fruit({
-    name: 'Banana',
-    score: 3,
-    review: "Weird texture"
-  });
+  // const banana = new Fruit({
+  //   name: 'Banana',
+  //   score: 3,
+  //   review: "Weird texture"
+  // });
 
-  Fruit.insertMany([kiwi, orange, banana], (err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("Successfully saved all the fruits to fruitsDB");
-    }
+  // Fruit.insertMany([kiwi, orange, banana], (err) => {
+  //   if (err) {
+  //     console.log(err);
+  //   } else {
+  //     console.log("Successfully saved all the fruits to fruitsDB");
+  //   }
+  // });
+
+  const fruits = await Fruit.find();
+
+  mongoose.connection.close();
+
+  fruits.forEach((fruit) => {
+    console.log(fruit.name);
   });
 }
-
